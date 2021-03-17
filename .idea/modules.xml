@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/product-metrics.iml" filepath="$PROJECT_DIR$/.idea/product-metrics.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../wallarm-api-python/.idea/wallarm-api-python.iml" filepath="$PROJECT_DIR$/../wallarm-api-python/.idea/wallarm-api-python.iml" />
+    </modules>
+  </component>
+</project>
