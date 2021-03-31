@@ -1,3 +1,4 @@
 wallarm-api
 pydantic
 humanize
+pygsheets
