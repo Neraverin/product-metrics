@@ -3,8 +3,9 @@ import humanize
 import pygsheets as pygsheets
 import datetime as dt
 
-from models import apiconnection
-from metrics.nsm import NorthStarMetric
+from .models import apiconnection
+from .metrics.nsm import NorthStarMetric
+from .metrics.clients import ClientsMetric
 
 
 def get_eu_connection():
@@ -35,4 +36,8 @@ if __name__ == '__main__':
 
         month_counter += 1
 
+    for i, v in enumerate(ClientsMetric.METRIC_TYPES):
+        metrics = ClientsMetric(EU_connection, v)
+        working_sheet.cell((10+i, 1)).value = metrics.name
+        working_sheet.cell((10+i, 2)).value = metrics.value()
 
