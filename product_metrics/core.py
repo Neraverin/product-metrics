@@ -6,13 +6,13 @@ import datetime as dt
 from .models import apiconnection
 from .metrics.nsm import NorthStarMetric
 from .metrics.clients import ClientsMetric
+from .metrics.hints import MetaHintsMetric
 
 
 def get_eu_connection():
     api_uuid = os.environ.get('WALLARM_UUID')
     api_secret = os.environ.get('WALLARM_SECRET')
-    return apiconnection.APIConnection(api='api.wallarm.com', uuid=api_uuid, secret=api_secret)
-
+    return apiconnection.APIConnection(api='https://api.wallarm.com', uuid=api_uuid, secret=api_secret)
 
 if __name__ == '__main__':
     google_client = pygsheets.authorize(service_file='credentials.json')
@@ -41,3 +41,4 @@ if __name__ == '__main__':
         working_sheet.cell((10+i, 1)).value = metrics.name
         working_sheet.cell((10+i, 2)).value = metrics.value()
 
+    print(MetaHintsMetric(EU_connection).value())
