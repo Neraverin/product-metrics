@@ -48,7 +48,34 @@ class HintsMetric(BaseType):
             return count_hints
 
     def collect_metrics(self):
-        metrics = [self.CountHintsByType("Attack rechecker rewrite (avaliable)", 3, "attack_rechecker_rewrite", self.clients, self.api),
-                   self.CountHintsByType("Attack by regex (avaliable)", 4, "regex", self.clients, self.api)]
+        metrics = [self.CountHintsByType("Attack rechecker rewrite (avaliable)", 7, "attack_rechecker_rewrite", self.clients, self.api),
+                   self.CountHintsByType("Attack by regex (avaliable)", 8, "regex", self.clients, self.api),
+                   self.CountHintsByType("Sensitive data (avaliable)", 9, "sensitive_data", self.clients, self.api),
+                   self.CountHintsByType("Vpatch (avaliable)", 10, "vpatch", self.clients, self.api),
+                   self.CountHintsByType("Wallarm mode (avaliable)", 11, "wallarm_mode", self.clients, self.api),
+                   self.CountHintsByType("Disable regex (avaliable)", 12, "disable_regex", self.clients, self.api),
+                   self.CountHintsByType("Experimental regex (avaliable)", 13, "experimental_regex", self.clients, self.api),
+                   self.CountHintsByType("Brute counter (avaliable)", 14, "brute_counter", self.clients, self.api),
+                   self.CountHintsByType("Dirbust counter (avaliable)", 15, "dirbust_counter", self.clients, self.api),
+                   self.CountHintsByType("Attack rechecker (candidate)", 16, "attack_rechecker", self.clients, self.api),
+                   self.CountHintsByType("Binary data (candidate)", 17, "binary_data", self.clients, self.api),
+                   self.CountHintsByType("Disable attack type (candidate)", 18, "disable_attack_type", self.clients, self.api),
+                   self.CountHintsByType("Parser state (candidate)", 19, "parser_state", self.clients, self.api),
+                   self.CountHintsByType("Set response header (candidate)", 20, "set_response_header", self.clients, self.api),
+                   self.CountHintsByType("Uploads (candidate)", 21, "uploads", self.clients, self.api),
+                   self.CountHintsByType("Tag (candidate)", 22, "tag", self.clients, self.api),
+                   self.CountHintsByType("disable_base64 (internal)", 23, "disable_base64", self.clients, self.api),
+                   self.CountHintsByType("overlimit_res (internal)", 24, "overlimit_res", self.clients, self.api),
+                   self.CountHintsByType("Variative values (internal)", 25, "variative_values", self.clients, self.api),
+                   self.CountHintsByType("Variative keys (internal)", 26, "variative_keys", self.clients, self.api),
+                   self.CountHintsByType("Variative by regex (internal)", 27, "variative_by_regex", self.clients, self.api),
+                   self.CountHintsByType("Max serialize data size (internal)", 28, "max_serialize_data_size", self.clients, self.api),
+                   self.CountHintsByType("Middleware (internal)", 29, "middleware", self.clients, self.api),
+                   self.CountHintsByType("Experimental stamp (internal)", 30, "experimental_stamp", self.clients, self.api),
+                   self.CountHintsByType("Disable stamp (internal)", 31, "disable_stamp", self.clients, self.api),
+                   self.CountHintsByType("Disable response stamp (internal)", 32, "disable_response_stamp", self.clients, self.api),
+                   self.CountHintsByType("Experimental parser (internal)", 33, "experimental_parser", self.clients, self.api),
+                   self.CountHintsByType("Disable ld context (internal)", 34, "disable_ld_context", self.clients, self.api)
+                   ]
 
         return metrics
