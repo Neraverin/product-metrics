@@ -1,7 +1,7 @@
 from .base_type import BaseType
 from .base_metric import BaseMetric
 from product_metrics.models.apiconnection import APIConnection
-from .helper import real_clients_only
+from .metric_helper import real_clients_only
 from wallarm_api import WallarmAPI
 
 
@@ -52,4 +52,3 @@ class HintsMetric(BaseType):
                    self.CountHintsByType("Attack by regex (avaliable)", 4, "regex", self.clients, self.api)]
 
         return metrics
-

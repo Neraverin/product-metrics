@@ -1,6 +1,6 @@
 from .base_type import BaseType
 from .base_metric import BaseMetric
-from .helper import real_clients_only
+from .metric_helper import real_clients_only
 from product_metrics.models.apiconnection import APIConnection
 
 from wallarm_api import WallarmAPI
@@ -81,4 +81,4 @@ class ClientsMetric(BaseType):
 
     def collect_metrics(self) -> list:
         return [self.countTrialClients, self.countPayingClients,
-                self.countTechnicalClients, self.countTotalClients, ]
+                self.countTechnicalClients, self.countTotalClients]
