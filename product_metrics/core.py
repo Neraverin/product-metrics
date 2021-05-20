@@ -1,43 +1,30 @@
-import os
 import humanize
-import pygsheets as pygsheets
 import datetime as dt
 
-from .models import apiconnection
+from .core_helper import *
 from .metrics.nsm import NorthStarMetric
 from .metrics.clients import ClientsMetric
-
-
-def get_eu_connection():
-    api_uuid = os.environ.get('WALLARM_UUID')
-    api_secret = os.environ.get('WALLARM_SECRET')
-    return apiconnection.APIConnection(api='api.wallarm.com', uuid=api_uuid, secret=api_secret)
-
+from .metrics.hints import HintsMetric
 
 if __name__ == '__main__':
-    google_client = pygsheets.authorize(service_file='credentials.json')
-    spreadsheet = google_client.open('Product metrics')
-    working_sheet = spreadsheet.sheet1
+    currentDay, currentMonth, currentYear = today()
+    spreadsheet = spreadsheet_connector()
+    connections = get_connections()
 
-    EU_connection = get_eu_connection()
-    metrics = [NorthStarMetric(EU_connection)]
+    column = eval_column()
 
-    dates = [[2021, 1], [2021, 2], [2021, 3]]
-    month_counter = 2
-    for year, month in dates:
-        working_sheet.cell((1, month_counter)).value = humanize.naturaldate(dt.date(year, month, 1))
+    for i, connection in enumerate(connections):
+        types = [NorthStarMetric(connection), HintsMetric(
+            connection), ClientsMetric(connection)]
 
-        for i in range(len(metrics)):
-            metric_value = metrics[i].value(year=year, month=month)
-            print(metrics[i].name, 'in', year, ',', month, ' = ',
-                  humanize.intword(metric_value))
-            working_sheet.cell((i + 2, 1)).value = metrics[i].name
-            working_sheet.cell((i + 2, month_counter)).value = metric_value
+        working_sheet = spreadsheet[i]
+        working_sheet.cell((1, column)).value = humanize.naturaldate(
+            dt.date(currentYear, currentMonth, 1))
 
-        month_counter += 1
-
-    for i, v in enumerate(ClientsMetric.METRIC_TYPES):
-        metrics = ClientsMetric(EU_connection, v)
-        working_sheet.cell((10+i, 1)).value = metrics.name
-        working_sheet.cell((10+i, 2)).value = metrics.value()
-
+        for i, _type in enumerate(types):
+            metrics = _type.collect_metrics()
+            for metric in metrics:
+                print(metric.name, metric.row, metric.value())
+                working_sheet.cell((metric.row+1, 1)).value = metric.name
+                working_sheet.cell((metric.row+1, column)
+                                   ).value = metric.value()
