@@ -1,24 +1,22 @@
 from abc import ABC, abstractmethod
-from typing import Any
-from product_metrics.models.apiconnection import APIConnection
 
 
 class BaseMetric(ABC):
     """Abstract base class for metrics.
     """
 
-    def __init__(self, name: str, connection: APIConnection) -> None:
+    def __init__(self, name: str, row: int) -> None:
         self.__name = name
-        self.__connection = connection
+        self.__row = row
 
     @property
     def name(self) -> str:
         return self.__name
 
     @property
-    def connection(self) -> APIConnection:
-        return self.__connection
+    def row(self) -> int:
+        return self.__row
 
     @abstractmethod
-    def value(self, year: int, month: int) -> Any:
+    def value(self) -> int:
         pass

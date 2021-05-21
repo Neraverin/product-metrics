@@ -1,88 +1,84 @@
+from .base_type import BaseType
 from .base_metric import BaseMetric
+from .metric_helper import real_clients_only
 from product_metrics.models.apiconnection import APIConnection
 
 from wallarm_api import WallarmAPI
 
 
+class ClientsMetric(BaseType):
+    def __init__(self, api_connection: APIConnection) -> None:
+        self.api = WallarmAPI(
+            api_connection.uuid, api_connection.secret, api_connection.api)
+        self.real_clients = real_clients_only(self.api)
 
-class ClientsMetric(BaseMetric):
-    METRIC_TYPES = ["Trial", "Paying", "Partner", "Technical", "Total"]
+        self.countTrialClients = self.CountTrialClients(
+            self.api, self.real_clients)
+        self.countPayingClients = self.CountPayingClients(
+            self.api, self.real_clients)
+        self.countTechnicalClients = self.CountTechnicalClients(self.api)
+        self.countTotalClients = self.CountTotalClients(self.api)
 
-    def __init__(self, api_connection: APIConnection, metric_type: METRIC_TYPES) -> None:
-        self.metric_type = metric_type
-        super().__init__(name=metric_type + ' Clients Metrics', connection=api_connection)
+    class CountTrialClients(BaseMetric):
+        def __init__(self, api, clients):
+            super().__init__("Trial Clients", 3)
+            self.api = api
+            self.clients = clients
 
-    def real_clients_only(self, api: WallarmAPI):
-        clients = api.clients_api.get_clients()
+        def value(self) -> int:
+            trial_clients = 0
 
-        real_clients = []
-        
-        for client in clients:
-            if client.is_technical == True:
-                continue
-            
-            real_clients.append(client)
+            for client in self.clients:
+                subscriptions = self.api.billing_api.get_subscription(
+                    client.id)
+                for subscription in subscriptions:
+                    if subscription.type == 'trial' and subscription.state == 'active':
+                        trial_clients += 1
 
-        return real_clients
+            return trial_clients
 
-    def partner_clients(self, api: WallarmAPI):
-        clients = api.clients_api.get_clients()
+    class CountPayingClients(BaseMetric):
+        def __init__(self, api, clients):
+            super().__init__("Paying Clients", 4)
+            self.api = api
+            self.clients = clients
 
-        real_clients = []
-        
-        #for client in clients:
-            #print(client.partnerid)
-            
-            #real_clients.append(client)
+        def value(self) -> int:
+            paying_clients = 0
 
-        return len(real_clients)
+            for client in self.clients:
+                subscriptions = self.api.billing_api.get_subscription(
+                    client.id)
+                for subscription in subscriptions:
+                    if subscription.type == 'trial' or subscription.state != 'active':
+                        paying_clients += 1
 
-    def trial_clients(self, api: WallarmAPI, real_clients: list) -> int:
-        trial_clients = 0
+            return paying_clients
 
-        for client in real_clients:
-            subscriptions = api.billing_api.get_subscription(client.id)
-            for subscription in subscriptions:
-                if subscription.type == 'trial' and subscription.state == 'active':
-                    trial_clients += 1
+    class CountTechnicalClients(BaseMetric):
+        def __init__(self, api):
+            super().__init__("Technical Clients", 5)
+            self.api = api
 
-        return trial_clients
+        def value(self) -> int:
+            clients = self.api.clients_api.get_clients()
 
-    def paying_clients(self, api: WallarmAPI, real_clients: list) -> int:
-        paying_clients = 0
+            technical_clients = 0
 
-        for client in real_clients:
-            subscriptions = api.billing_api.get_subscription(client.id)
-            for subscription in subscriptions:
-                if subscription.type == 'trial' or subscription.state != 'active':
-                    paying_clients += 1
+            for client in clients:
+                if client.is_technical == True:
+                    technical_clients += 1
 
-        return paying_clients
+            return technical_clients
 
-    def technical_clients(self, api: WallarmAPI) -> int:
-        clients = api.clients_api.get_clients()
+    class CountTotalClients(BaseMetric):
+        def __init__(self, api):
+            super().__init__("Total Clients", 6)
+            self.api = api
 
-        technical_clients = 0
+        def value(self):
+            return len(self.api.clients_api.get_clients())
 
-        for client in clients:
-            if client.is_technical == True:
-                technical_clients += 1
-
-        return technical_clients
-
-    def value(self) -> int:
-        api = WallarmAPI(self.connection.uuid, self.connection.secret)
-        real_clients = self.real_clients_only(api)
-
-        if self.metric_type == "Trial":
-            metric = self.trial_clients(api, real_clients)
-        elif self.metric_type == "Paying":
-            metric = self.paying_clients(api, real_clients)
-        elif self.metric_type == "Partner":
-            metric = self.partner_clients(api)
-        elif self.metric_type == "Technical":
-            metric = self.technical_clients(api)
-        elif self.metric_type == "Total":
-            metric = len(api.clients_api.get_clients())
-
-        return metric
+    def collect_metrics(self) -> list:
+        return [self.countTrialClients, self.countPayingClients,
+                self.countTechnicalClients, self.countTotalClients]
