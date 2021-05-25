@@ -6,6 +6,8 @@ from .metrics.nsm import NorthStarMetric
 from .metrics.clients import ClientsMetric
 from .metrics.hints import HintsMetric
 from .metrics.users import UsersMetric
+from .metrics.attack_rechecher import AttackRechecker
+
 
 
 if __name__ == '__main__':
