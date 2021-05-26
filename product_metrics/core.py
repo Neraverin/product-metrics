@@ -6,8 +6,8 @@ from .metrics.nsm import NorthStarMetric
 from .metrics.clients import ClientsMetric
 from .metrics.hints import HintsMetric
 from .metrics.users import UsersMetric
-from .metrics.attack_rechecher import AttackRechecker
-
+from .metrics.attack_rechecker import AttackRechecker
+from .metrics.integrations import Integrations
 
 
 if __name__ == '__main__':
@@ -19,7 +19,8 @@ if __name__ == '__main__':
 
     for i, connection in enumerate(connections):
         types = [NorthStarMetric(connection), HintsMetric(
-            connection), ClientsMetric(connection), UsersMetric(connection)]
+            connection), ClientsMetric(connection), UsersMetric(connection),
+            AttackRechecker(connection), Integrations(connection)]
 
         working_sheet = spreadsheet[i]
         working_sheet.cell((1, column)).value = humanize.naturaldate(
