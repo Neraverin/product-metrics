@@ -1,7 +1,6 @@
 from .base_type import BaseType
 from .base_metric import BaseMetric
-from product_metrics.models.apiconnection import APIConnection
-from .metric_helper import real_clients_only
+from .metric_helper import MetricHelper
 from wallarm_api import WallarmAPI
 
 
@@ -39,26 +38,18 @@ class HintsMetric(BaseType):
 
     PARSER_TYPES = [("Disable parser base_64", 41, "base64")]
 
-    def __init__(self, connection: APIConnection) -> None:
-        self.connection = connection
-        self.api = WallarmAPI(
-            connection.uuid, connection.secret, connection.api)
-        self.clients = real_clients_only(self.api)
-
     class CountHintsByType(BaseMetric):
-        def __init__(self, name, row, hint_type, clients, api) -> None:
+        def __init__(self, name, row, hint_type) -> None:
             super().__init__(name, row)
             self.hint_type = hint_type
-            self.api = api
-            self.clients = clients
 
         def value(self):
             count_hints = 0
 
-            for client in self.clients:
+            for client in MetricHelper().real_clients:
                 i = 0
                 while True:
-                    hints = self.api.hints_api.get_hint_details(
+                    hints = WallarmAPI().hints_api.get_hint_details(
                         type=[self.hint_type], clientid=client.id, limit=100, offset=i*100)
                     count_hints += len(hints)
                     i += 1
@@ -68,19 +59,17 @@ class HintsMetric(BaseType):
             return count_hints
 
     class CountParserStateByParser(BaseMetric):
-        def __init__(self, name, row, parser_type, clients, api) -> None:
+        def __init__(self, name, row, parser_type) -> None:
             super().__init__(name, row)
             self.parser_type = parser_type
-            self.api = api
-            self.clients = clients
 
         def value(self):
             count_hints = 0
 
-            for client in self.clients:
+            for client in MetricHelper().real_clients:
                 i = 0
                 while True:
-                    hints = self.api.hints_api.get_hint_details(
+                    hints = WallarmAPI().hints_api.get_hint_details(
                         type=["parser_state"], clientid=client.id, limit=100, offset=i*100)
                     for hint in hints:
                         if hint.parser == self.parser_type:
@@ -92,6 +81,6 @@ class HintsMetric(BaseType):
             return count_hints
 
     def collect_metrics(self):
-        metrics = [self.CountHintsByType(*t, self.clients, self.api) for t in self.HINT_TYPES] + [
-            self.CountParserStateByParser(*t, self.clients, self.api) for t in self.PARSER_TYPES]
+        metrics = [self.CountHintsByType(*t) for t in self.HINT_TYPES] + [
+            self.CountParserStateByParser(*t) for t in self.PARSER_TYPES]
         return metrics

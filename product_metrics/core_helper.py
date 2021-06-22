@@ -8,10 +8,22 @@ def get_eu_connection():
     api_secret = os.environ.get('WALLARM_SECRET')
     return apiconnection.APIConnection(api='https://api.wallarm.com', uuid=api_uuid, secret=api_secret)
 
+def get_us_connection():
+    api_uuid = os.environ.get('WALLARM_US_UUID')
+    api_secret = os.environ.get('WALLARM_US_SECRET')
+    return apiconnection.APIConnection(api='https://us1.api.wallarm.com', uuid=api_uuid, secret=api_secret)
+
+def get_ru_connection():
+    api_uuid = os.environ.get('WALLARM_RU_UUID')
+    api_secret = os.environ.get('WALLARM_RU_SECRET')
+    return apiconnection.APIConnection(api='https://api.wallarm.ru', uuid=api_uuid, secret=api_secret)
+
 def get_connections():
     EU_connection = get_eu_connection()
+    US_connection = get_us_connection()
+    RU_connection = get_ru_connection()
 
-    return [EU_connection]
+    return [EU_connection, US_connection, RU_connection]
 
 def today():
     now = dt.datetime.now()

@@ -1,19 +1,38 @@
 from wallarm_api import WallarmAPI
+from weakref import WeakValueDictionary
 
-def real_clients_only(api: WallarmAPI):
-    clients = api.clients_api.get_clients()
 
-    real_clients = []
+class Singleton(type):
+    _instances = WeakValueDictionary()
 
-    for client in clients:
-        if client.is_technical == True:
-            continue
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            instance = super(Singleton, cls).__call__(*args, **kwargs)
+            cls._instances[cls] = instance
 
-        subscriptions = api.billing_api.get_subscription(client.id)
-        for subscription in subscriptions:
-            if subscription.type == 'trial' or subscription.state != 'active':
+        return cls._instances[cls]
+
+
+class MetricHelper(metaclass=Singleton):
+    def __init__(self):
+        self.real_clients = self.get_real_clients()
+
+    def get_real_clients(self):
+        clients = WallarmAPI().clients_api.get_clients()
+
+        real_clients = []
+        print('counted')
+        print(WallarmAPI()._WallarmAPI__api)
+
+        for client in clients:
+            if client.is_technical == True:
                 continue
 
-        real_clients.append(client)
+            subscriptions = WallarmAPI().billing_api.get_subscription(client.id)
+            for subscription in subscriptions:
+                if subscription.type == 'trial' or subscription.state != 'active':
+                    continue
 
-    return real_clients
+            real_clients.append(client)
+
+        return real_clients
