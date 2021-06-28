@@ -27,18 +27,19 @@ def get_connections():
 
 def today():
     now = dt.datetime.now()
-    currentDay = now.day
-    currentMonth = now.month
-    currentYear = now.year
+    current_day = now.day
+    current_month = now.month
+    current_year = now.year
+    current_week = now.strftime("%W")
 
-    return currentDay, currentMonth, currentYear
+    return current_day, int(current_week), current_month, current_year
 
 def eval_column():
     start_year = 2021
-    start_month = 5
-    _, currentMonth, currentYear = today()
+    start_week = 26
+    _, current_week, _, current_year = today()
 
-    column = (currentMonth + 2) + 12 * (currentYear - start_year) - start_month
+    column = (current_week - start_week + 3) + 52 * (current_year - start_year)
     return column
 
 def spreadsheet_connector():

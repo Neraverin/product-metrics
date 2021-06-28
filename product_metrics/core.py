@@ -1,4 +1,3 @@
-import humanize
 import datetime as dt
 
 from wallarm_api import WallarmAPI
@@ -16,7 +15,7 @@ from .metrics.detect_metrics.stamps import StampsMetric
 
 
 def count_metrics(metric_types):
-    currentDay, currentMonth, currentYear = today()
+    current_day, _, current_month, current_year = today()
     spreadsheet = spreadsheet_connector()
     connections = get_connections()
 
@@ -26,8 +25,7 @@ def count_metrics(metric_types):
         api = WallarmAPI(connection.uuid, connection.secret, connection.api)
 
         working_sheet = spreadsheet[i]
-        working_sheet.cell((1, column)).value = humanize.naturaldate(
-            dt.date(currentYear, currentMonth, currentDay))
+        working_sheet.cell((1, column)).value = dt.date(current_year, current_month, current_day).strftime("%b %d %Y")
 
         for _type in metric_types:
             metrics = _type.collect_metrics()
@@ -41,7 +39,8 @@ def count_metrics(metric_types):
 
 
 def count_detect_metrics(metric_types):
-    currentDay, currentMonth, currentYear = today()
+    """ Not implemented yet """
+    current_day, _, current_month, current_year = today()
     spreadsheet = spreadsheet_connector()
     connections = get_connections()
 
@@ -52,8 +51,7 @@ def count_detect_metrics(metric_types):
 
         for j, _type in enumerate(metric_types):
             working_sheet = spreadsheet[6+i+j]
-            working_sheet.cell((1, column)).value = humanize.naturaldate(
-                dt.date(currentYear, currentMonth, currentDay))
+            working_sheet.cell((1, column)).value = dt.date(current_year, current_month, current_day).strftime("%b %d %Y")
 
             metrics = _type.collect_metrics()
             for metric in metrics:
@@ -71,3 +69,4 @@ if __name__ == '__main__':
 
     #count_detect_metrics([StampsMetric()])
     count_metrics(types)
+    print(f'Counted {dt.datetime.now()}')
