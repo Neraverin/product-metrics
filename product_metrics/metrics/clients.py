@@ -32,7 +32,7 @@ class ClientsMetric(BaseType):
                 subscriptions = WallarmAPI().billing_api.get_subscription(
                     client.id)
                 for subscription in subscriptions:
-                    if subscription.type == 'trial' or subscription.state != 'active':
+                    if subscription.type != 'trial' and subscription.state == 'active':
                         paying_clients += 1
 
             return paying_clients
