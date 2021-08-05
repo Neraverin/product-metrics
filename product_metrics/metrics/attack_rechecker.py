@@ -14,7 +14,6 @@ class AttackRechecker(BaseType):
             clients_with_attack_rechecker = 0
             for client in MetricHelper().real_clients:
                 if client.attack_rechecker_mode == "on":
-                    print(client.id)
                     clients_with_attack_rechecker += 1
 
             return clients_with_attack_rechecker

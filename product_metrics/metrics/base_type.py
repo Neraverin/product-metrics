@@ -8,5 +8,5 @@ class BaseType(ABC):
     """
 
     @abstractmethod
-    def collect_metrics(self, year: int, month: int) -> list:
+    def collect_metrics(self) -> list:
         pass

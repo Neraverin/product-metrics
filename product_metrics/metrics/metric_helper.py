@@ -21,8 +21,6 @@ class MetricHelper(metaclass=Singleton):
         clients = WallarmAPI().clients_api.get_clients()
 
         real_clients = []
-        print('counted')
-        print(WallarmAPI()._WallarmAPI__api)
 
         for client in clients:
             if client.is_technical == True:
