@@ -12,6 +12,7 @@ from .metrics.integrations import Integrations
 from .metrics.attacks import Attacks
 from .metrics.appstructure import Appstructure
 from .metrics.detect_metrics.stamps import StampsMetric
+from .metrics.triggers import TriggersMetric
 
 
 def count_metrics(metric_types):
@@ -64,8 +65,8 @@ def count_detect_metrics(metric_types):
 
 
 if __name__ == '__main__':
-    types = [NorthStarMetric(), HintsMetric(), ClientsMetric(), UsersMetric(),
-            AttackRechecker(), Integrations()]
+    types = [NorthStarMetric(), ClientsMetric(), HintsMetric(), UsersMetric(),
+             AttackRechecker(), Integrations(), TriggersMetric()]
 
     #count_detect_metrics([StampsMetric()])
     count_metrics(types)

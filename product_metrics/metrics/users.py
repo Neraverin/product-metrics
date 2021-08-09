@@ -70,7 +70,7 @@ class UsersMetric(BaseType):
 
         def value(self) -> int:
             yesterday_users = 0
-            day_delta = dt.timedelta(days=1)
+            day_delta = dt.timedelta(days=4)
             for client in MetricHelper().real_clients:
                 users = WallarmAPI().users_api.get_users(
                     {"clientid": client.id, "enabled": True})
