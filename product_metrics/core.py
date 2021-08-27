@@ -13,6 +13,7 @@ from .metrics.attacks import Attacks
 from .metrics.appstructure import Appstructure
 from .metrics.detect_metrics.stamps import StampsMetric
 from .metrics.triggers import TriggersMetric
+from .metrics.node import NodeMetric
 
 
 def count_metrics(metric_types):
@@ -26,7 +27,8 @@ def count_metrics(metric_types):
         api = WallarmAPI(connection.uuid, connection.secret, connection.api)
 
         working_sheet = spreadsheet[i]
-        working_sheet.cell((1, column)).value = dt.date(current_year, current_month, current_day).strftime("%b %d %Y")
+        working_sheet.cell((1, column)).value = dt.date(
+            current_year, current_month, current_day).strftime("%b %d %Y")
 
         for _type in metric_types:
             metrics = _type.collect_metrics()
@@ -52,7 +54,8 @@ def count_detect_metrics(metric_types):
 
         for j, _type in enumerate(metric_types):
             working_sheet = spreadsheet[6+i+j]
-            working_sheet.cell((1, column)).value = dt.date(current_year, current_month, current_day).strftime("%b %d %Y")
+            working_sheet.cell((1, column)).value = dt.date(
+                current_year, current_month, current_day).strftime("%b %d %Y")
 
             metrics = _type.collect_metrics()
             for metric in metrics:
@@ -66,8 +69,8 @@ def count_detect_metrics(metric_types):
 
 if __name__ == '__main__':
     types = [NorthStarMetric(), ClientsMetric(), HintsMetric(), UsersMetric(),
-             AttackRechecker(), Integrations(), TriggersMetric()]
+             AttackRechecker(), Integrations(), TriggersMetric(), NodeMetric()]
 
-    #count_detect_metrics([StampsMetric()])
+    # count_detect_metrics([StampsMetric()])
     count_metrics(types)
     print(f'Counted {dt.datetime.now()}')
