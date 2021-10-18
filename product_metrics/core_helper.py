@@ -23,7 +23,9 @@ def get_connections():
     US_connection = get_us_connection()
     RU_connection = get_ru_connection()
 
-    return [EU_connection, US_connection, RU_connection]
+    return [EU_connection,
+            US_connection,
+            RU_connection]
 
 def today():
     now = dt.datetime.now()
