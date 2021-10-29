@@ -12,7 +12,8 @@ class Integrations(BaseType):
                          ('Pager Duty Integration', 52, 'pager_duty'),
                          ('Insight Connect Integration', 53, 'insight_connect'),
                          ('Sumo Logic Integration', 54, 'sumo_logic'),
-                         ('Splunk Integration', 55, 'splunk'), ]
+                         ('Splunk Integration', 55, 'splunk'),
+                         ('MS Teams Integration', 56, 'ms_teams'), ]
 
     class CountIntegrations(BaseMetric):
         def __init__(self):
